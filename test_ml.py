@@ -1,28 +1,58 @@
 import pytest
 # TODO: add necessary import
+import numpy as np
+import pandas as pd
+from ml.model import train_model, inference, compute_model_metrics, save_model, load_model
 
-# TODO: implement the first test. Change the function name and input as needed
-def test_one():
+def test_train_model_returns_classifier():
     """
-    # add description for the first test
+    Test that train_model returns an sklearn classifier after training.
     """
-    # Your code here
-    pass
+    # Create a tiny fake dataset for testing
+    X = pd.DataFrame({
+        "age": [25, 45, 35, 29],
+        "hours-per-week": [40, 50, 60, 20],
+    })
+    y = np.array([0, 1, 0, 1])
+
+    model = train_model(X, y)
+
+    # Check: model is not None and has 'predict' method like sklearn estimators
+    assert model is not None
+    assert hasattr(model, "predict")
 
 
-# TODO: implement the second test. Change the function name and input as needed
-def test_two():
+def test_inference_output_shape():
     """
-    # add description for the second test
+    Test that inference returns a prediction array of the expected shape.
     """
-    # Your code here
-    pass
+    # Fake data
+    X = pd.DataFrame({
+        "age": [30, 50],
+        "hours-per-week": [40, 60],
+    })
+    y = np.array([0, 1])
+
+    model = train_model(X, y)
+
+    preds = inference(model, X)
+
+    # Check: output shape matches number of rows
+    assert isinstance(preds, np.ndarray)
+    assert preds.shape[0] == X.shape[0]
 
 
-# TODO: implement the third test. Change the function name and input as needed
-def test_three():
+def test_compute_model_metrics_types():
     """
-    # add description for the third test
+    Test that compute_model_metrics returns precision, recall, and f1 as floats.
     """
-    # Your code here
-    pass
+    # Simple true/pred arrays
+    y_true = np.array([0, 1, 1, 0])
+    y_pred = np.array([0, 1, 0, 0])
+
+    precision, recall, f1 = compute_model_metrics(y_true, y_pred)
+
+    # Check: outputs are floats
+    assert isinstance(precision, float)
+    assert isinstance(recall, float)
+    assert isinstance(f1, float)
